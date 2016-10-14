@@ -22,6 +22,7 @@ export default class CacheMoney {
   async set (fileName, data) {
     const filePath = this.filePath(fileName);
     await fs.writeFile(filePath, data);
+    return true;
   }
 
   async get (fileName) {
@@ -46,6 +47,8 @@ export default class CacheMoney {
   }
 
   async mtime (fileName) {
+    if (!await this._fileExists(fileName)) return undefined;
+
     if (this._mtimes[fileName] !== undefined) {
       return this._mtimes[fileName];
     } else {
@@ -71,6 +74,7 @@ export default class CacheMoney {
     delete this._mtimes[fileName];
     if (!await this._fileExists(fileName)) return;
     await fs.unlinkAsync(this.filePath(fileName));
+    return true;
   }
 
   async _fileExists (fileName) {
