@@ -82,16 +82,16 @@ test('filePath', async t => {
 test('mtime', async t => {
   const cache = new CacheMoney();
   const before = Date.now();
-  await wait(1100);
+  await wait(2000);
   await cache.set('yolo', 'asdf');
-  await wait(1100);
+  await wait(2000);
   const after = Date.now();
   const mtime = await cache.mtime('yolo');
 
-  t.true(mtime > before);
-  t.true(mtime < after);
-  t.true(cache._mtimes['yolo'] > before);
-  t.true(cache._mtimes['yolo'] < after);
+  t.equal(mtime > before, true);
+  t.equal(mtime < after, true);
+  t.equal(cache._mtimes['yolo'] > before, true);
+  t.equal(cache._mtimes['yolo'] < after, true);
   t.end();
 });
 
