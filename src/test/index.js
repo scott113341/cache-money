@@ -1,4 +1,4 @@
-import { promisify, promisifyAll } from 'bluebird';
+import { promisifyAll } from 'bluebird';
 import _fs from 'fs';
 import path from 'path';
 import test from 'tape';
@@ -81,6 +81,6 @@ async function wait (ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function endsWith(string, end) {
+function endsWith (string, end) {
   return string.slice(0 - end.length) === end;
 }
