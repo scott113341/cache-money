@@ -9,7 +9,7 @@ export default class CacheMoney {
 
   constructor (options) {
     this.options = {
-      cacheName: Date.now().toString(),
+      name: Date.now().toString(),
       cachePath: path.join(__dirname, 'cache'),
       ttl: Infinity,
       removeExpired: true,
@@ -38,7 +38,7 @@ export default class CacheMoney {
     if (this._filePaths[fileName]) {
       return this._filePaths[fileName];
     } else {
-      const fileHash = crypto.createHash('md5').update(this.options.cacheName + fileName).digest('hex');
+      const fileHash = crypto.createHash('md5').update(this.options.name + fileName).digest('hex');
       const filePath = path.join(this.options.cachePath, fileHash);
       this._filePaths[fileName] = filePath;
       return filePath;

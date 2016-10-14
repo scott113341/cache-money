@@ -6,18 +6,22 @@ import test from 'tape';
 import CacheMoney from '../index.js';
 
 const fs = promisifyAll(_fs);
-const cacheName = 'TEST';
+const name = 'TEST';
 
 test('constructor', async t => {
   const cache = new CacheMoney();
   t.equal(typeof cache.options, 'object');
+  t.equal(typeof cache._filePaths, 'object');
+  t.equal(typeof cache._mtimes, 'object');
+  t.equal(cache.options.name.length, 13);
   t.true(endsWith(cache.options.cachePath, 'cache-money/lib/cache'));
-  t.true(typeof cache.expirationTimes, 'object');
+  t.equal(cache.options.ttl, Infinity);
+  t.equal(cache.options.removeExpired, true);
   t.end();
 });
 
 test('set', async t => {
-  const cache = new CacheMoney({ cacheName });
+  const cache = new CacheMoney({ name });
   await cache.set('yolo.html', '<h1>cool website bro</h1>');
   const cachedContent = await fs.readFileAsync(cachePath('944be974118baf6a1d8bbe22621a0d87'), 'utf8');
   t.equal(String(cachedContent), '<h1>cool website bro</h1>');
@@ -25,14 +29,14 @@ test('set', async t => {
 });
 
 test('get', async t => {
-  const cache = new CacheMoney({ cacheName });
+  const cache = new CacheMoney({ name });
   const content = await cache.get('yolo.html');
   t.equal(content.toString(), '<h1>cool website bro</h1>');
   t.end();
 });
 
 test('get (not expired)', async t => {
-  const cache = new CacheMoney({ cacheName, ttl: 2000 });
+  const cache = new CacheMoney({ name, ttl: 2000 });
   await cache.set('yolo.html', '<h1>cool website bro</h1>');
   await wait(1000);
   const content = await cache.get('yolo.html');
@@ -41,7 +45,7 @@ test('get (not expired)', async t => {
 });
 
 test('get (expired)', async t => {
-  const cache = new CacheMoney({ cacheName, ttl: 200 });
+  const cache = new CacheMoney({ name, ttl: 200 });
   await cache.set('yolo.html', '<h1>cool website bro</h1>');
   await wait(1000);
   const content = await cache.get('yolo.html');
@@ -50,14 +54,14 @@ test('get (expired)', async t => {
 });
 
 test('get (no file)', async t => {
-  const cache = new CacheMoney({ cacheName });
+  const cache = new CacheMoney({ name });
   const content = await cache.get('nope.html');
   t.equal(content, undefined);
   t.end();
 });
 
 test('filePath', async t => {
-  const cache = new CacheMoney({ cacheName });
+  const cache = new CacheMoney({ name });
   t.equal(cache._filePaths['yee.txt'], undefined);
   t.true(endsWith(cache.filePath('yee.txt'), 'cache-money/lib/cache/80af58806b64d084b543717842c3dde1'));
   t.true(endsWith(cache._filePaths['yee.txt'], 'cache-money/lib/cache/80af58806b64d084b543717842c3dde1'));
@@ -65,7 +69,7 @@ test('filePath', async t => {
 });
 
 test('mtime', async t => {
-  const cache = new CacheMoney({ cacheName });
+  const cache = new CacheMoney({ name });
   const before = Date.now();
   await wait(1100);
   await cache.set('yolo.html', 'asdf');
