@@ -27,9 +27,9 @@ export default class CacheMoney {
   async get (fileName) {
     const now = Date.now();
     if (await this.isExpired(fileName, now)) {
-      if (this.options.removeExpired) this.remove(fileName);
       return undefined;
     } else {
+      if (!await this._fileExists(fileName)) return undefined;
       return await fs.readFileAsync(this.filePath(fileName));
     }
   }
@@ -57,15 +57,29 @@ export default class CacheMoney {
   }
 
   async isExpired (fileName, now) {
+    if (!await this._fileExists(fileName)) return true;
+
     const mtime = await this.mtime(fileName);
-    return now > mtime + this.options.ttl;
+    const expired = now > mtime + this.options.ttl;
+    if (expired && this.options.removeExpired) this.remove(fileName);
+
+    return expired;
   }
 
   async remove (fileName) {
-    const filePath = this.filePath(fileName);
     delete this._filePaths[fileName];
     delete this._mtimes[fileName];
-    return await fs.unlinkAsync(filePath);
+    if (!await this._fileExists(fileName)) return;
+    await fs.unlinkAsync(this.filePath(fileName));
+  }
+
+  async _fileExists (fileName) {
+    try {
+      await fs.statAsync(this.filePath(fileName));
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
 }

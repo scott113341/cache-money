@@ -49,6 +49,13 @@ test('get (expired)', async t => {
   t.end();
 });
 
+test('get (no file)', async t => {
+  const cache = new CacheMoney({ cacheName });
+  const content = await cache.get('nope.html');
+  t.equal(content, undefined);
+  t.end();
+});
+
 test('filePath', async t => {
   const cache = new CacheMoney({ cacheName });
   t.equal(cache._filePaths['yee.txt'], undefined);
