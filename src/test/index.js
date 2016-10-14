@@ -98,6 +98,7 @@ test('mtime', async t => {
 test('remove', async t => {
   const cache = new CacheMoney();
   await cache.set('yolo', 'asdf');
+  await wait(2000);
   t.equal(await cache._fileExists('yolo'), true);
   t.equal(String(await cache.get('yolo')), 'asdf');
   t.equal(await cache.remove('yolo'), true);
