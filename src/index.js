@@ -87,3 +87,5 @@ export default class CacheMoney {
   }
 
 }
+
+module.exports = CacheMoney;
