@@ -1,0 +1,4 @@
+/node_modules/
+
+/lib/cache/*
+!/lib/cache/keep.js
