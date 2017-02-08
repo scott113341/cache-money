@@ -1,9 +1,9 @@
 language: node_js
 node_js:
   - "4"
-  - "5"
   - "6"
-script: npm run test:ci
+  - "7"
+script: npm run test
 
 notifications:
   email:
