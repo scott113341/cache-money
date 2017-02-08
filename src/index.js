@@ -21,7 +21,7 @@ export default class CacheMoney {
 
   async set (fileName, data) {
     const filePath = this.filePath(fileName);
-    await fs.writeFile(filePath, data);
+    await fs.writeFile(filePath, data, () => {});
     return true;
   }
 
