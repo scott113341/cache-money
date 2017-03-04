@@ -1,6 +1,6 @@
 {
   "name": "cache-money",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "File-system cache with TTL.",
   "author": "Scott Hardy",
   "license": "MIT",
