@@ -71,6 +71,25 @@ test('get (expired)', async t => {
   t.end();
 });
 
+test('get (missing)', async t => {
+  const cache = new CacheMoney();
+  const content = await cache.get('yolo.html');
+  t.equal(content, undefined);
+  t.end();
+});
+
+test('get (missing + callback)', async t => {
+  t.plan(2);
+  function missing () {
+    t.equal(true, true, 'should get called');
+    return 'yeezee';
+  }
+
+  const cache = new CacheMoney();
+  const content = await cache.get('missing.html', { missing });
+  t.equal(content.toString(), 'yeezee');
+});
+
 test('filePath', async t => {
   const cache = new CacheMoney({ name });
   t.equal(cache._filePaths['yee.txt'], undefined);

@@ -19,19 +19,19 @@ export default class CacheMoney {
     this._mtimes = {};
   }
 
-  async set (fileName, data) {
+  async set (fileName, data, { options } = {}) {
     const filePath = this.filePath(fileName);
-    await fs.writeFileAsync(filePath, data);
+    await fs.writeFileAsync(filePath, data, options);
     return true;
   }
 
-  async get (fileName) {
+  async get (fileName, { options, missing } = {}) {
     const now = Date.now();
     if (await this.isExpired(fileName, now)) {
-      return undefined;
+      return this._getMissing(fileName, missing);
     } else {
-      if (!await this._fileExists(fileName)) return undefined;
-      return await fs.readFileAsync(this.filePath(fileName));
+      if (!await this._fileExists(fileName)) return this._getMissing(fileName, missing);
+      return await fs.readFileAsync(this.filePath(fileName), options);
     }
   }
 
@@ -84,6 +84,15 @@ export default class CacheMoney {
     } catch (e) {
       return false;
     }
+  }
+
+  async _getMissing (fileName, missing) {
+    if (!missing) return undefined;
+
+    const data = await missing();
+    const filePath = this.filePath(fileName);
+    await fs.writeFileAsync(filePath, data);
+    return data;
   }
 
 }
